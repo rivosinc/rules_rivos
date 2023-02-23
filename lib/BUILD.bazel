@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: Copyright (c) 2022-2023 by Rivos Inc.
+# Licensed under the Apache License, Version 2.0, see LICENSE for details.
+# SPDX-License-Identifier: Apache-2.0
+
+# Rivos platform rules
+
+package(default_visibility = ["//visibility:public"])
+
+licenses(["notice"])
+
+exports_files([
+    "deps.bzl",
+    "platform.bzl",
+    "repositories.bzl",
+])

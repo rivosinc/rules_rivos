@@ -1,0 +1,127 @@
+# SPDX-FileCopyrightText: Copyright (c) 2022 by Rivos Inc.
+# Licensed under the Apache License, Version 2.0, see LICENSE for details.
+# SPDX-License-Identifier: Apache-2.0
+
+# Rivos toolchains definition
+
+package(default_visibility = ["//visibility:public"])
+
+licenses(["notice"])
+
+exports_files([
+    "BUILD.riscv32_elf_toolchain",
+    "BUILD.riscv64_elf_toolchain",
+    "BUILD.riscv32_gnu_toolchain",
+    "BUILD.riscv64_gnu_toolchain",
+])
+
+toolchain(
+    name = "cc-riscv32-elf-toolchain",
+    exec_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+    target_compatible_with = [
+        "@platforms//os:none",
+        "@platforms//cpu:riscv32",
+    ],
+    toolchain = "@riscv32_elf_toolchain//:cc-riscv32-elf-toolchain",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
+)
+
+toolchain(
+    name = "cc-riscv32-gnu-toolchain-linux",
+    exec_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+    target_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:riscv32",
+    ],
+    toolchain = "@riscv32_gnu_toolchain//:cc-riscv32-gnu-toolchain",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
+)
+
+toolchain(
+    name = "cc-riscv64-elf-toolchain",
+    exec_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+    target_compatible_with = [
+        "@platforms//os:none",
+        "@platforms//cpu:riscv64",
+    ],
+    toolchain = "@riscv64_elf_toolchain//:cc-riscv64-elf-toolchain",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
+)
+
+toolchain(
+    name = "aarch64-macos-cc-riscv32-elf-toolchain",
+    exec_compatible_with = [
+        "@platforms//os:macos",
+        "@platforms//cpu:arm64",
+    ],
+    target_compatible_with = [
+        "@platforms//os:none",
+        "@platforms//cpu:riscv32",
+    ],
+    toolchain = "@aarch64-macos_riscv32_elf_toolchain//:cc-riscv32-elf-toolchain",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
+)
+
+toolchain(
+    name = "aarch64-macos-cc-riscv32-gnu-toolchain-linux",
+    exec_compatible_with = [
+        "@platforms//os:macos",
+        "@platforms//cpu:arm64",
+    ],
+    target_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:riscv32",
+    ],
+    toolchain = "@aarch64-macos_riscv32_gnu_toolchain//:cc-riscv32-gnu-toolchain",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
+)
+
+toolchain(
+    name = "aarch64-macos-cc-riscv64-elf-toolchain",
+    exec_compatible_with = [
+        "@platforms//os:macos",
+        "@platforms//cpu:arm64",
+    ],
+    target_compatible_with = [
+        "@platforms//os:none",
+        "@platforms//cpu:riscv64",
+    ],
+    toolchain = "@aarch64-macos_riscv64_elf_toolchain//:cc-riscv64-elf-toolchain",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
+)
+
+toolchain(
+    name = "aarch64-macos-cc-riscv64-gnu-toolchain-linux",
+    exec_compatible_with = [
+        "@platforms//os:macos",
+        "@platforms//cpu:arm64",
+    ],
+    target_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:riscv64",
+    ],
+    toolchain = "@aarch64-macos_riscv64_gnu_toolchain//:cc-riscv64-gnu-toolchain",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
+)
+toolchain(
+    name = "cc-riscv64-gnu-toolchain-linux",
+    exec_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+    target_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:riscv64",
+    ],
+    toolchain = "@riscv64_gnu_toolchain//:cc-riscv64-gnu-toolchain",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
+)

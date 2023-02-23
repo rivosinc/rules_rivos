@@ -1,0 +1,144 @@
+# SPDX-FileCopyrightText: Copyright (c) 2022 by Rivos Inc.
+# Licensed under the Apache License, Version 2.0, see LICENSE for details.
+# SPDX-License-Identifier: Apache-2.0
+
+# Risc-V GNU Toolchain build file for releases published at
+# https://github.com/riscv-collab/riscv-gnu-toolchain/releases
+
+load("@rules_cc//cc:defs.bzl", "cc_toolchain")
+load("@rules_cc//cc/private/toolchain:unix_cc_toolchain_config.bzl", "cc_toolchain_config")
+
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "compiler_files",
+    srcs = glob([ "riscv/**" ], allow_empty = True),
+)
+
+filegroup(
+    name = "compiler_components",
+    srcs = glob([
+        "riscv/bin/riscv64-unknown-linux-gnu-ar*",
+        "riscv/bin/riscv64-unknown-linux-gnu-as*",
+        "riscv/bin/riscv64-unknown-linux-gnu-gcc*",
+        "riscv/bin/riscv64-unknown-linux-gnu-ld*",
+        "riscv/bin/riscv64-unknown-linux-gnu-nm*",
+        "riscv/bin/riscv64-unknown-linux-gnu-objcopy*",
+        "riscv/bin/riscv64-unknown-linux-gnu-objdump*",
+        "riscv/bin/riscv64-unknown-linux-gnu-strip*",
+    ]),
+)
+
+filegroup(
+    name = "sysroot",
+    srcs = glob([
+        "riscv/sysroot/lib/*.so.*",
+        "riscv/sysroot/usr/lib/*.so.*",
+    ], allow_empty = True),
+)
+
+filegroup(
+    name = "gcc",
+    srcs = [
+        "riscv/bin/riscv64-unknown-linux-gnu-gcc",
+    ]
+)
+
+cc_toolchain(
+    name = "cc-riscv64-gnu-toolchain",
+    toolchain_identifier = "riscv64-gnu-toolchain",
+    toolchain_config = ":riscv64-gnu-toolchain",
+    all_files = ":compiler_files",
+    ar_files = ":compiler_components",
+    as_files = ":compiler_components",
+    compiler_files = ":compiler_files",
+    dwp_files = ":empty",
+    linker_files = ":compiler_files",
+    objcopy_files = ":compiler_components",
+    strip_files = ":compiler_components",
+    dynamic_runtime_lib = ":empty",
+    supports_param_files = 1,
+    module_map = None,
+)
+
+cc_toolchain_config(
+    name = "riscv64-gnu-toolchain",
+    toolchain_identifier = "riscv64-gnu-toolchain",
+    host_system_name = "local",
+    abi_version = "local",
+    abi_libc_version = "local",
+    cpu = "riscv64",
+    target_system_name = "local",
+    target_libc = "gnu",
+    # package relative directories
+    tool_paths = {
+        "ar"        : "riscv/bin/riscv64-unknown-linux-gnu-ar",
+        "ld"        : "riscv/bin/riscv64-unknown-linux-gnu-ld",
+        "llvm-cov"  : "none",
+        "cpp"       : "riscv/bin/riscv64-unknown-linux-gnu-cpp",
+        "gcc"       : "riscv/bin/riscv64-unknown-linux-gnu-gcc",
+        "dwp"       : "riscv/bin/riscv64-unknown-linux-gnu-dwp",
+        "gcov"      : "riscv/bin/riscv64-unknown-linux-gnu-gcov",
+        "nm"        : "riscv/bin/riscv64-unknown-linux-gnu-nm",
+        "objcopy"   : "riscv/bin/riscv64-unknown-linux-gnu-objcopy",
+        "objdump"   : "riscv/bin/riscv64-unknown-linux-gnu-objdump",
+        "strip"     : "riscv/bin/riscv64-unknown-linux-gnu-strip",
+    },
+    compiler = "gcc",
+    # workspace relative directories
+    cxx_builtin_include_directories = [
+        "external/riscv64_gnu_toolchain/riscv/lib/gcc/riscv64-unknown-linux-gnu/12.1.0/include",
+        "external/riscv64_gnu_toolchain/riscv/lib/gcc/riscv64-unknown-linux-gnu/12.1.0/include-fixed",
+        "external/riscv64_gnu_toolchain/riscv/riscv64-unknown-linux-gnu/include/c++/12.1.0",
+        "external/riscv64_gnu_toolchain/riscv/sysroot/usr/include",
+    ],
+    unfiltered_compile_flags = [
+        "-no-canonical-prefixes",
+        "-fno-canonical-system-headers",
+        "-Wno-builtin-macro-redefined",
+        "-D__DATE__=\"redacted\"",
+        "-D__TIMESTAMP__=\"redacted\"",
+        "-D__TIME__=\"redacted\"",
+        "-D__TOOL__=\"redacted\"",
+    ],
+    compile_flags = [
+        "-Wall",
+        "-U_FORTIFY_SOURCE",
+        "-fstack-protector",
+        "-Wunused-but-set-parameter",
+        "-Wno-free-nonheap-object",
+        "-fno-stack-protector",
+        "-fno-omit-frame-pointer",
+    ],
+    cxx_flags = [
+        "-std=c++0x"
+    ],
+    link_flags = [
+        # none
+        "-Lexternal/riscv64_gnu_toolchain/riscv/sysroot/lib",
+    ],
+    link_libs = [
+        # none
+    ],
+    dbg_compile_flags = [
+        "-g",
+    ],
+    opt_compile_flags = [
+        "-g0",
+        "-O2",
+        "-D_FORTIFY_SOURCE=1",
+        "-DNDEBUG",
+        "-ffunction-sections",
+        "-fdata-sections",
+    ],
+    opt_link_flags = [
+        "-Wl,--gc-sections",
+    ],
+    coverage_compile_flags = [
+        "--coverage",
+    ],
+    coverage_link_flags = [
+        "--coverage",
+    ],
+    supports_start_end_lib = False,
+)

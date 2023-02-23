@@ -1,0 +1,139 @@
+# SPDX-FileCopyrightText: Copyright (c) 2022 by Rivos Inc.
+# Licensed under the Apache License, Version 2.0, see LICENSE for details.
+# SPDX-License-Identifier: Apache-2.0
+
+# Risc-V GNU Toolchain build file for releases published at
+# https://github.com/riscv-collab/riscv-elf-toolchain/releases
+
+package(default_visibility = ["//visibility:public"])
+
+load("@rules_cc//cc:defs.bzl", "cc_toolchain")
+load("@rules_cc//cc/private/toolchain:unix_cc_toolchain_config.bzl",
+     "cc_toolchain_config")
+
+filegroup(
+    name = "compiler_files",
+    srcs = glob([ "riscv/**" ], allow_empty = True),
+)
+
+filegroup(
+    name = "compiler_components",
+    srcs = glob([
+        "riscv/bin/riscv32-unknown-elf-ar*",
+        "riscv/bin/riscv32-unknown-elf-as*",
+        "riscv/bin/riscv32-unknown-elf-gcc*",
+        "riscv/bin/riscv32-unknown-elf-ld*",
+        "riscv/bin/riscv32-unknown-elf-nm*",
+        "riscv/bin/riscv32-unknown-elf-objcopy*",
+        "riscv/bin/riscv32-unknown-elf-objdump*",
+        "riscv/bin/riscv32-unknown-elf-strip*",
+    ]),
+)
+
+filegroup(
+    name = "sysroot",
+    srcs = glob([
+        "riscv/sysroot/lib/*.so.*",
+        "riscv/sysroot/usr/lib/*.so.*",
+    ], allow_empty = True),
+)
+
+filegroup(
+    name = "gcc",
+    srcs = [
+        "riscv/bin/riscv32-unknown-elf-gcc",
+    ]
+)
+
+cc_toolchain(
+    name = "cc-riscv32-elf-toolchain",
+    toolchain_identifier = "riscv32-elf-toolchain",
+    toolchain_config = ":riscv32-elf-toolchain",
+    all_files = ":compiler_files",
+    ar_files = ":compiler_components",
+    as_files = ":compiler_components",
+    compiler_files = ":compiler_files",
+    dwp_files = ":empty",
+    linker_files = ":compiler_files",
+    objcopy_files = ":compiler_components",
+    strip_files = ":compiler_components",
+    dynamic_runtime_lib = ":empty",
+    supports_param_files = 1,
+    module_map = None,
+)
+
+cc_toolchain_config(
+    name = "riscv32-elf-toolchain",
+    toolchain_identifier = "riscv32-elf-toolchain",
+    host_system_name = "local",
+    abi_version = "local",
+    abi_libc_version = "local",
+    cpu = "riscv32",
+    target_system_name = "riscv32-none",
+    target_libc = "none",
+    # package relative directories
+    tool_paths = {
+        "ar"        : "riscv/bin/riscv32-unknown-elf-ar",
+        "ld"        : "riscv/bin/riscv32-unknown-elf-ld",
+        "llvm-cov"  : "none",
+        "cpp"       : "riscv/bin/riscv32-unknown-elf-cpp",
+        "gcc"       : "riscv/bin/riscv32-unknown-elf-gcc",
+        "dwp"       : "riscv/bin/riscv32-unknown-elf-dwp",
+        "gcov"      : "riscv/bin/riscv32-unknown-elf-gcov",
+        "nm"        : "riscv/bin/riscv32-unknown-elf-nm",
+        "objcopy"   : "riscv/bin/riscv32-unknown-elf-objcopy",
+        "objdump"   : "riscv/bin/riscv32-unknown-elf-objdump",
+        "strip"     : "riscv/bin/riscv32-unknown-elf-strip",
+    },
+    compiler = "gcc",
+    # workspace relative directories
+    cxx_builtin_include_directories = [
+        "external/riscv32_elf_toolchain/riscv/sysroot/usr/include",
+    ],
+    unfiltered_compile_flags = [
+        "-no-canonical-prefixes",
+        "-fno-canonical-system-headers",
+        "-Wno-builtin-macro-redefined",
+        "-D__DATE__=\"redacted\"",
+        "-D__TIMESTAMP__=\"redacted\"",
+        "-D__TIME__=\"redacted\"",
+        "-D__TOOL__=\"redacted\"",
+    ],
+    compile_flags = [
+        "-Wall",
+        "-U_FORTIFY_SOURCE",
+        "-fstack-protector",
+        "-Wunused-but-set-parameter",
+        "-Wno-free-nonheap-object",
+        "-fno-stack-protector",
+        "-fno-omit-frame-pointer",
+    ],
+    link_flags = [
+        # none
+        "-Lexternal/riscv32_elf_toolchain/riscv/sysroot/lib",
+    ],
+    link_libs = [
+        # none
+    ],
+    dbg_compile_flags = [
+        "-g",
+    ],
+    opt_compile_flags = [
+        "-g0",
+        "-O2",
+        "-D_FORTIFY_SOURCE=1",
+        "-DNDEBUG",
+        "-ffunction-sections",
+        "-fdata-sections",
+    ],
+    opt_link_flags = [
+        "-Wl,--gc-sections",
+    ],
+    coverage_compile_flags = [
+        "--coverage",
+    ],
+    coverage_link_flags = [
+        "--coverage",
+    ],
+    supports_start_end_lib = False,
+)
